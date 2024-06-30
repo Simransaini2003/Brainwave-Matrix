@@ -1,0 +1,113 @@
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
+
+class Account {
+    private String accountNumber;
+    private String pin;
+    private double balance;
+
+    public Account(String accountNumber, String pin, double balance) {
+        this.accountNumber = accountNumber;
+        this.pin = pin;
+        this.balance = balance;
+    }
+
+    public String getAccountNumber() {
+        return accountNumber;
+    }
+
+    public String getPin() {
+        return pin;
+    }
+
+    public double getBalance() {
+        return balance;
+    }
+
+    public void setBalance(double balance) {
+        this.balance = balance;
+    }
+}
+
+public class ATM {
+    private Map<String, Account> accounts;
+    private Scanner scanner;
+
+    public ATM() {
+        this.accounts = new HashMap<>();
+        this.scanner = new Scanner(System.in);
+
+        // Add some sample accounts
+        accounts.put("123456", new Account("123456", "1234", 1000.0));
+        accounts.put("789012", new Account("789012", "5678", 500.0));
+    }
+
+    public void start() {
+        System.out.println("Welcome to the ATM!");
+        System.out.print("Enter your account number: ");
+        String accountNumber = scanner.next();
+        System.out.print("Enter your PIN: ");
+        String pin = scanner.next();
+
+        Account account = accounts.get(accountNumber);
+        if (account!= null && account.getPin().equals(pin)) {
+            System.out.println("Login successful!");
+            menu(account);
+        } else {
+            System.out.println("Invalid account number or PIN. Please try again.");
+            start();
+        }
+    }
+
+    private void menu(Account account) {
+        while (true) {
+            System.out.println("1. Check balance");
+            System.out.println("2. Withdraw cash");
+            System.out.println("3. Deposit cash");
+            System.out.println("4. Exit");
+            System.out.print("Choose an option: ");
+            int option = scanner.nextInt();
+
+            switch (option) {
+                case 1:
+                    System.out.println("Your balance is: " + account.getBalance());
+                    break;
+                case 2:
+                    withdraw(account);
+                    break;
+                case 3:
+                    deposit(account);
+                    break;
+                case 4:
+                    System.out.println("Goodbye!");
+                    return;
+                default:
+                    System.out.println("Invalid option. Please try again.");
+            }
+        }
+    }
+
+    private void withdraw(Account account) {
+        System.out.print("Enter the amount to withdraw: ");
+        double amount = scanner.nextDouble();
+        if (amount > account.getBalance()) {
+            System.out.println("Insufficient balance. Please try again.");
+        } else {
+            account.setBalance(account.getBalance() - amount);
+            System.out.println("Withdrawal successful. Your new balance is: " + account.getBalance());
+        }
+    }
+
+    private void deposit(Account account) {
+        System.out.print("Enter the amount to deposit: ");
+        double amount = scanner.nextDouble();
+        account.setBalance(account.getBalance() + amount);
+        System.out.println("Deposit successful. Your new balance is: " + account.getBalance());
+    }
+
+    public static void main(String[] args) {
+        ATM atm = new ATM();
+        atm.start();
+    }
+}
